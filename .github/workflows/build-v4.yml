@@ -15,7 +15,7 @@ jobs:
       - name: Extract Android project
         run: |
           mkdir -p /tmp/kasir-v4
-          unzip -o KasirNominal_V4_Updated.zip -d /tmp/kasir-v4
+          unzip -o KasirNominal_V4_Clean_Project.zip -d /tmp/kasir-v4
           cp -R /tmp/kasir-v4/. .
 
       - name: Setup Java
