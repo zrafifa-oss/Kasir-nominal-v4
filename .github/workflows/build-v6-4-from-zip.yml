@@ -25,7 +25,7 @@ jobs:
 
       - name: Extract V6.4 source
         run: |
-          unzip -q KasirNominal_V6_4_QRIS_Kecil.zip -d source
+          KasirNominal_V6_4_Setelan_Logo_QRIS_SUMBER.zip -d source
           PROJECT_DIR=$(find source -type f \( -name settings.gradle -o -name settings.gradle.kts \) -print -quit | xargs dirname)
           if [ -z "$PROJECT_DIR" ]; then
             echo "Gradle project not found"
