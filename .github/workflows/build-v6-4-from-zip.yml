@@ -4,6 +4,9 @@ name: Build Kasir Nominal V6.4
 on:
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -24,32 +27,32 @@ jobs:
           gradle-version: '8.7'
 
       - name: Extract V6.4 source
+        shell: bash
         run: |
-          KasirNominal_V6_4_Setelan_Logo_QRIS_SUMBER.zip -d source
-          PROJECT_DIR=$(find source -type f \( -name settings.gradle -o -name settings.gradle.kts \) -print -quit | xargs dirname)
-          if [ -z "$PROJECT_DIR" ]; then
+          mkdir -p source
+          unzip -q KasirNominal_V6_4_Setelan_Logo_QRIS_SUMBER.zip -d source
+
+          SETTINGS_FILE=$(find source -type f \( -name settings.gradle -o -name settings.gradle.kts \) -print -quit)
+
+          if [ -z "$SETTINGS_FILE" ]; then
             echo "Gradle project not found"
             exit 1
           fi
+
+          PROJECT_DIR=$(dirname "$SETTINGS_FILE")
           echo "PROJECT_DIR=$PROJECT_DIR" >> "$GITHUB_ENV"
 
       - name: Build APK
+        shell: bash
         run: |
           cd "$PROJECT_DIR"
           gradle assembleDebug
-
-      - name: Prepare APK
-        run: |
-          APK=$(find "$PROJECT_DIR" -type f -name '*.apk' -path '*/outputs/apk/debug/*' | head -n 1)
-          if [ -z "$APK" ]; then
-            echo "APK not found"
-            exit 1
-          fi
-          cp "$APK" "$GITHUB_WORKSPACE/KasirNominal-V6.4.apk"
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: Kasir-Nominal-V6.4
-          path: KasirNominal-V6.4.apk
+          path: ${{ env.PROJECT_DIR }}/app/build/outputs/apk/debug/*.apk
+          if-no-files-found: error
+          retention-days: 7
           
