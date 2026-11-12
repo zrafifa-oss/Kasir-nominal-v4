@@ -1,5 +1,5 @@
 
-name: Build Kasir Nominal V6.4
+name: Build Kasir Nominal V6.4 FIX
 
 on:
   workflow_dispatch:
@@ -26,11 +26,11 @@ jobs:
         with:
           gradle-version: '8.7'
 
-      - name: Extract V6.4 source
+      - name: Extract source ZIP
         shell: bash
         run: |
           mkdir -p source
-          unzip -q KasirNominal_V6_4_Setelan_Logo_QRIS_SUMBER.zip -d source
+          unzip -q KasirNominal_V6_4_Setelan_Logo_QRIS_FIX.zip -d source
 
           SETTINGS_FILE=$(find source -type f \( -name settings.gradle -o -name settings.gradle.kts \) -print -quit)
 
@@ -40,6 +40,7 @@ jobs:
           fi
 
           PROJECT_DIR=$(dirname "$SETTINGS_FILE")
+          echo "Project directory: $PROJECT_DIR"
           echo "PROJECT_DIR=$PROJECT_DIR" >> "$GITHUB_ENV"
 
       - name: Build APK
@@ -51,8 +52,7 @@ jobs:
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: Kasir-Nominal-V6.4
-          path: ${{ env.PROJECT_DIR }}/app/build/outputs/apk/debug/*.apk
+          name: Kasir-Nominal-V6.4-FIX
+          path: source/**/app/build/outputs/apk/debug/*.apk
           if-no-files-found: error
           retention-days: 7
-          
